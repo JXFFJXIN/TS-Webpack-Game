@@ -17,7 +17,12 @@ module.exports = {
     module:{
         rules:[// 模块规则
             // 将test值中的文件交给loader值中的加载器处理
-            {test:/.ts$/,loader:"ts-loader"}
+            {test:/.ts$/,use:{
+                loader:"ts-loader",
+                options:{
+                    transpileOnly:true
+                }
+            }}
         ]
     },
     resolve:{// 配置解析的扩展名
