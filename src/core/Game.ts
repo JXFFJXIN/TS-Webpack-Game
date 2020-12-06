@@ -1,4 +1,5 @@
 import GameConfig from "./GameConfig";
+import { Square } from "./Square";
 import { SquareGroup } from "./SquareGroup";
 import { createTeris } from "./Teris";
 import { TerisRule } from "./TerisRule";
@@ -20,6 +21,9 @@ export class Game {
 
     // 自动下落的间隔时间
     private _duration:number = 1000;
+
+    // 当前游戏中已存在的方块
+    private _exists:Square[] = [];
 
     // 重新设置中心点的坐标,以达到让该方块出现在区域的中上方
     private resetCenterPoint(width:number,teris:SquareGroup){
@@ -68,28 +72,30 @@ export class Game {
     // 向左操作
     public controlLeft(){
         if(this._curTeris && this._gameStatus === GameStatus.playing){
-            TerisRule.move(this._curTeris,MoveDirection.left);
+            TerisRule.move(this._curTeris,MoveDirection.left,this._exists);
         }
     }
 
     // 向右操作
     public controlRight(){
         if(this._curTeris && this._gameStatus === GameStatus.playing){
-            TerisRule.move(this._curTeris,MoveDirection.right);
+            TerisRule.move(this._curTeris,MoveDirection.right,this._exists);
         }
     }
 
     // 向下操作
     public controlDown(){
         if(this._curTeris && this._gameStatus === GameStatus.playing){
-            TerisRule.moveDirectly(this._curTeris,MoveDirection.down);
+            TerisRule.moveDirectly(this._curTeris,MoveDirection.down,this._exists);
+           // 触底
+           this.hitBottom();
         }
     }
 
     // 旋转操作
     public controlRotate(){
         if(this._curTeris && this._gameStatus === GameStatus.playing){
-            TerisRule.rotate(this._curTeris);
+            TerisRule.rotate(this._curTeris,this._exists);
         }
     }
 
@@ -100,9 +106,24 @@ export class Game {
         }
         this._timer = setInterval(()=>{
             if(this._curTeris){
-               TerisRule.move(this._curTeris,MoveDirection.down); 
+               if(!TerisRule.move(this._curTeris,MoveDirection.down,this._exists)){
+                    // 触底
+                    this.hitBottom();
+               }; 
             }
         },this._duration)
+    }
+
+    // 触底操作
+    private hitBottom(){
+        // 将当前的俄罗斯方块包含的小方块，加入到已存在的方块数组中
+        this._exists.push(...this._curTeris!.squares)
+        // 处理移除
+        const num = TerisRule.deleteSquare(this._exists);
+        console.log(num);
+        // 切换方块
+        this.switchTeris();
+
     }
 
     // 切换方块
