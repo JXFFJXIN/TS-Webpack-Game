@@ -130,13 +130,13 @@ export class LineShape extends SquareGroup {
 //     {x:-1,y:0},{x:0,y:0},{x:1,y:0},{x:2,y:0}
 // ]
 export const shapes = [
-    // TShape,
-    // LShape,
-    // LMirrorShape,
-    // LineShape,
-    // SShape,
+    TShape,
+    LShape,
+    LMirrorShape,
+    LineShape,
+    SShape,
     SquareShape,
-    // SMirrorShape
+    SMirrorShape
 ]
 
 export const colors = [
