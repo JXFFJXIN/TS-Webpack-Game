@@ -5,8 +5,10 @@
   "main": "index.js",
   "dependencies": {},
   "devDependencies": {
+    "@types/jquery": "^3.5.4",
     "clean-webpack-plugin": "^3.0.0",
     "html-webpack-plugin": "^4.5.0",
+    "jquery": "^3.5.1",
     "ts-loader": "^8.0.11",
     "typescript": "^4.1.2",
     "webpack": "^4.32.2",

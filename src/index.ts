@@ -5,38 +5,25 @@ import { SquareGroup } from "./core/SquareGroup";
 import { createTeris, LShape } from "./core/Teris";
 import { IPoint, MoveDirection } from "./core/Types";
 import { TerisRule } from "./core/TerisRule";
+import { GamePageViewer } from "./core/viewer/GamePageViewer";
+import { Game } from "./core/Game";
 
-
-const teris = createTeris({x:2,y:3})
-teris.squares.forEach(sq=>{
-    sq.viewer = new SquarePageViewer(sq,$("#root"))
+var g = new Game(new GamePageViewer());
+$("#pause").on("click",function(){
+    g.pause();
 })
-
-$("#down").on("click",function(){
-    TerisRule.move(teris,{
-        x:teris.centerPoint.x,
-        y:teris.centerPoint.y + 1
-    })
+$("#start").on("click",function(){
+    g.start();
 })
-
-$("#right").on("click",function(){
-    TerisRule.move(teris,MoveDirection.right)
-})
-
 $("#left").on("click",function(){
-    TerisRule.move(teris,MoveDirection.left)
+    g.controlLeft();
 })
-
-$("#remove").on("click",function(){
-    teris.squares.forEach(sq=>{
-        if(sq.viewer){
-            sq.viewer.remove();
-        }
-    })
+$("#right").on("click",function(){
+    g.controlRight();
 })
-
-$("#show").on("click",function(){
-    teris.squares.forEach(sq=>{
-        sq.viewer = new SquarePageViewer(sq,$("#root"))
-    })  
+$("#down").on("click",function(){
+    g.controlDown();
+})
+$("#rotate").on("click",function(){
+    g.controlRotate();
 })
