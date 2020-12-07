@@ -20,13 +20,36 @@ export class Game {
     private _timer?:number; // 浏览器中的计数器本质是一个数字
 
     // 自动下落的间隔时间
-    private _duration:number = 1000;
+    private _duration:number;
 
     // 当前游戏中已存在的方块
     private _exists:Square[] = [];
 
     // 积分
     private _score:number = 0;
+
+    public get gameStatus(){
+        return this._gameStatus;
+    }
+
+    public get score(){
+        return this._score;
+    }
+    public set score(val){
+        this._score = val;
+        this._viewer.showScore(val);
+        const level = GameConfig.levels.filter(it=>it.score<=val).pop()!;
+        if(level.duration === this._duration){
+            return;
+        }
+        this._duration = level.duration;
+        if(this._timer){
+            clearInterval(this._timer);
+            this._timer = undefined;
+            this.autoDrop();
+            console.log(this._duration);
+        }
+    }
 
     // 重新设置中心点的坐标,以达到让该方块出现在区域的中上方
     private resetCenterPoint(width:number,teris:SquareGroup){
@@ -43,9 +66,11 @@ export class Game {
 
     // 游戏显示
     public constructor(private _viewer:GamePageViewer){
+        this._duration=GameConfig.levels[0].duration;
         this._nextTeris = createTeris({x:0,y:0})// 无意义
         this.createNext();
         this._viewer.init(this)
+        this._viewer.showScore(this._score);
     }
 
     // 创建下一个方块
@@ -64,7 +89,8 @@ export class Game {
         this._exists = [];
         this.createNext();
         this._curTeris = undefined;
-        this._score = 0;
+        this.score = 0;
+        this._duration = GameConfig.levels[0].duration;
     }
 
     // 游戏开始
@@ -84,6 +110,7 @@ export class Game {
             this.switchTeris();
         }
         this.autoDrop()
+        this._viewer.onGameStart();
     }
 
     // 游戏暂停
@@ -93,6 +120,7 @@ export class Game {
             clearInterval(this._timer);
             this._timer = undefined;
         }
+        this._viewer.onGamePause();
     }
 
     // 向左操作
@@ -158,7 +186,7 @@ export class Game {
         if(lineNum===0){
             return;
         }
-        this._score += lineNum*20 -10;
+        this.score += lineNum*20 -10;
     }
 
     // 切换方块
@@ -176,6 +204,7 @@ export class Game {
             this._gameStatus = GameStatus.over;
             clearInterval(this._timer);
             this._timer = undefined;
+            this._viewer.onGameOver();
             return;
         }
         this.createNext();

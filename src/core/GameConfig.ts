@@ -6,5 +6,18 @@ export default {
     nextSize:{
         width:6,
         height:6
-    }
+    },
+    levels:[
+        {score:0,duration:1000},
+        {score:30,duration:900},
+        {score:60,duration:800},
+        {score:90,duration:700},
+        {score:120,duration:600},
+        {score:150,duration:500},
+        {score:180,duration:400},
+        {score:210,duration:300},
+        {score:240,duration:200},
+        {score:270,duration:100},
+        {score:300,duration:50},
+    ]
 }

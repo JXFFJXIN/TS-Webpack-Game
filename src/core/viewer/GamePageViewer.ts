@@ -1,5 +1,5 @@
 import { SquareGroup } from "../SquareGroup";
-import { GameViewer } from "../Types";
+import { GameStatus, GameViewer } from "../Types";
 import { SquarePageViewer } from "./SquarePageViewer";
 import $ from "jquery"
 import { Game } from "../Game";
@@ -9,7 +9,9 @@ import PageConfig from "./PageConfig";
 export class GamePageViewer implements GameViewer {
     private nextDom = $("#next");
     private panelDom = $("#panel");
-    init(game: Game): void {
+    private scoreDom = $("#score");
+    private msgDom = $("#msg");
+    public init(game: Game): void {
         // 1. 设置区域宽高
         this.panelDom.css({
             width:GameConfig.panelSize.width * PageConfig.SquareSize.width ,
@@ -30,19 +32,47 @@ export class GamePageViewer implements GameViewer {
                 game.controlDown();
             }else if(e.key === "ArrowUp"){
                 game.controlRotate();
+            }else if(e.key === " "){
+                if(game.gameStatus === GameStatus.init
+                    ||game.gameStatus === GameStatus.pause
+                    ||game.gameStatus === GameStatus.over
+                    ){
+                    game.start();
+                }else if(game.gameStatus === GameStatus.playing){
+                    game.pause();
+                }
             }
         })
     }
-    showNext(teris: SquareGroup): void {
+
+    public showScore(score:number){
+        this.scoreDom.html(score.toString());
+    }
+
+    public showNext(teris: SquareGroup): void {
         teris.squares.forEach(sq=>{
             sq.viewer = new SquarePageViewer(sq,this.nextDom)
         })
     }
-    switch(teris: SquareGroup): void {
+    public switch(teris: SquareGroup): void {
         teris.squares.forEach(sq=>{
             sq.viewer!.remove();
             sq.viewer = new SquarePageViewer(sq,this.panelDom);
         })
     }
-
+    onGameStart(): void {
+        this.msgDom.hide();
+    }
+    onGamePause(): void {
+        this.msgDom.css({
+            display:"flex",
+        });
+        this.msgDom.find("p").html("游戏暂停")
+    }
+    onGameOver(): void {
+        this.msgDom.css({
+            display:"flex",
+        });
+        this.msgDom.find("p").html("游戏结束")
+    }
 }

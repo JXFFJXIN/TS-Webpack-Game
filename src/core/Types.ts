@@ -39,5 +39,10 @@ export interface GameViewer{
     switch(teris:SquareGroup):void,
     // 完成界面的初始化 
     init(game:Game):void
-
+    // 游戏暂停触发的事件
+    onGamePause():void
+    // 游戏结束触发的事件
+    onGameOver():void
+    // 游戏开始触发的事件
+    onGameStart():void
 }
